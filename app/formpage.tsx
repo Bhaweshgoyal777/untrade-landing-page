@@ -15,29 +15,6 @@ function FormDetails() {
       setPayment(state)
   }
 
-  useEffect(() => {
-    if (paymentInitial === true) {
-      console.log("Calling Axios Request");
-  
-      axios.post('http://192.168.1.3:5002/api/v1/stripe/create-customer', {
-        amount: "1000",
-        currency: 'usd'
-      })
-      .then((response) => {
-        console.log(response);
-        if(response){
-          setSession(response.data.data.session)
-        }
-      })
-      .catch((error) => {
-        console.log(error.message);
-      })
-      .finally(() => {
-        console.log("Request completed");
-      });
-    }  
-  } , [paymentInitial])
-
   const onChangeValueName = (event) => {
     setName(event.target.value);
   };
@@ -48,23 +25,22 @@ function FormDetails() {
 
   const onSubmit = () => {
     let state = paymentInitial ? false : true
-    axios.post(`http://192.168.1.3:5002/api/v1/stripe/create-customer?email=${email}`, {
-        amount: "1000",
-        currency: 'usd'
+    axios.post(`http://localhost:5002/api/v1/stripe/create-checkout-session?email=${email}`, {
+        amount: "150",
+        currency: 'usd',
+        phone : '1234567890'
     })
     .then((response) => {
         console.log(response);
         if(response){
-            setSession(response.data.data.session)
+            setSession(response.data.data)
+            setPayment(state)
+
         }
     })
     .catch((error) => {
         console.log(error.message);
     })
-    .finally(() => {
-        console.log("Request completed");
-        setPayment(state)
-    });
 }
 
 return (
